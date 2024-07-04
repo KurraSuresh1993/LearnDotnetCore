@@ -13,5 +13,16 @@ namespace LearnAPI.Controllers
         {
             _customerService = customerService;
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllAsync()
+        {
+            var customers=await _customerService.GetAllAsync();
+            if(customers == null)
+            {
+                return NotFound();
+            }
+            return Ok(customers);
+        }
     }
 }

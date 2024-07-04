@@ -1,6 +1,10 @@
 
+using AutoMapper;
 using LearnAPI.Container;
+using LearnAPI.Helper;
+using LearnAPI.Repos;
 using LearnAPI.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace LearnAPI
 {
@@ -13,10 +17,17 @@ namespace LearnAPI
             // Add services to the container.
 
             builder.Services.AddControllers();
+            builder.Services.AddDbContext<LearnDataContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("apiconn")));
+          
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddTransient<ICustomerService,CustomerService>();
+            
+            //auto mapper
+            var automapper = new MapperConfiguration(item => item.AddProfile(new AutoMapperHandler()));
+            IMapper mapper=automapper.CreateMapper();
+            builder.Services.AddSingleton(mapper);
 
             var app = builder.Build();
 
