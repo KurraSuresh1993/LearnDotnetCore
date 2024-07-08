@@ -1,4 +1,5 @@
-﻿using ConsoleToWebAPI.Interfaces.Services;
+﻿using ConsoleToWebAPI.DTO;
+using ConsoleToWebAPI.Interfaces.Services;
 using ConsoleToWebAPI.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +18,7 @@ namespace ConsoleToWebAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Employee>>> GetAsync()
+        public async Task<ActionResult<List<EmployeeDto>>> GetAllEmployeesAsync()
         {
             var employees=await _employeeService.GetAllEmployeesAsync();
             if(employees is null)
@@ -27,6 +28,7 @@ namespace ConsoleToWebAPI.Controllers
             return Ok(employees);
         }
 
+     
         
     }
 }
