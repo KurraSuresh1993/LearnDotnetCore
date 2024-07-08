@@ -1,10 +1,8 @@
 ﻿using ConsoleToWebAPI.DTO;
-using ConsoleToWebAPI.Models;
-using System.Threading.Tasks;
 
-namespace ConsoleToWebAPI.Interfaces.Repositories
+namespace ConsoleToWebAPI.Interfaces.Services
 {
-    public interface IEmployeeRepository
+    public interface IEmployeeService
     {
         Task<IEnumerable<EmployeeDto>> GetAllEmployeesAsync();
 

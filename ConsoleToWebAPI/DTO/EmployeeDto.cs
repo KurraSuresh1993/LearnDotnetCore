@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ConsoleToWebAPI.Models
+namespace ConsoleToWebAPI.DTO
 {
-    public class Employee
+    public class EmployeeDto
     {
         [Required]
         public int Id { get; set; }
@@ -17,8 +17,8 @@ namespace ConsoleToWebAPI.Models
         public string Email { get; set; }
 
         [DataType(DataType.Currency)]
-        public double Salary { get;set; }
+        public double Salary { get; set; }
 
-        public bool IsActive { get; set; } = true;
+        public bool IsActive { get; set; }
     }
 }
