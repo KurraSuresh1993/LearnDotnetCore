@@ -27,5 +27,9 @@ namespace LearnAPI.Models
         public bool? IsActive { get; set; }
 
         public string? StatusName { get; set; }
+
+        [StringLength(50)]
+        [Unicode(false)]
+        public string? Code { get; set; }
     }
 }

@@ -28,4 +28,8 @@ public partial class TblCustomer
     public int? CreditLimit { get; set; }
 
     public bool? IsActive { get; set; }
+
+    [StringLength(50)]
+    [Unicode(false)]
+    public string? Code { get; set; }
 }
