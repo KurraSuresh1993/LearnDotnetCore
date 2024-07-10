@@ -17,7 +17,7 @@ namespace ConsoleToWebAPI.Controllers
             _employeeService = employeeService;
         }
 
-        [HttpGet]
+        [HttpGet("GetAll")]
         public async Task<ActionResult<List<EmployeeDto>>> GetAllEmployeesAsync()
         {
             var employees=await _employeeService.GetAllEmployeesAsync();
@@ -27,6 +27,9 @@ namespace ConsoleToWebAPI.Controllers
             }
             return Ok(employees);
         }
+
+        //[HttpGet("GetEmployeeById")]
+        //public 
 
      
         
