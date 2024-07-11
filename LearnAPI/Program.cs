@@ -50,7 +50,7 @@ namespace LearnAPI
                 options.PermitLimit = 1;
                 options.QueueLimit = 0;
                 options.QueueProcessingOrder = System.Threading.RateLimiting.QueueProcessingOrder.OldestFirst;
-            }).RejectionStatusCode=401);
+            }).RejectionStatusCode=401); 
 
             //Logger
             var logPath = builder.Configuration.GetSection("Logging:Logpath").Value;
