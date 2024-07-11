@@ -1,9 +1,15 @@
 ﻿using LearnAPI.Models;
 using LearnAPI.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace LearnAPI.Controllers
 {
+  //  [Authorize]
+    [EnableRateLimiting("fixedwindow")]
+    //[DisableCors]
     [ApiController]
     [Route("api/[controller]")]
     public class CustomersController : ControllerBase
@@ -15,7 +21,8 @@ namespace LearnAPI.Controllers
             _customerService = customerService;
         }
 
-        [HttpGet("GetALL")]
+       // [EnableCors("corspolicy")]
+        [HttpGet("GetAll")]
         public async Task<IActionResult> GetAllAsync()
         {
             var customers = await _customerService.GetAllAsync();
@@ -26,6 +33,7 @@ namespace LearnAPI.Controllers
             return Ok(customers);
         }
 
+        [DisableRateLimiting]
         [HttpGet("GetById")]
         public async Task<IActionResult> GetByIdAsync([FromQuery] int id)
         {

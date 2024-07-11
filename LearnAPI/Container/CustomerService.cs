@@ -12,11 +12,13 @@ namespace LearnAPI.Container
     {
         private readonly LearnDataContext _context;
         private readonly IMapper _mapper;
+        private readonly ILogger<CustomerService> _logger;
 
-        public CustomerService(LearnDataContext context, IMapper mapper)
+        public CustomerService(LearnDataContext context, IMapper mapper,ILogger<CustomerService> logger)
         {
             _context = context;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<APIResponse> CreateAsync(CustomerModel customer)
@@ -24,6 +26,7 @@ namespace LearnAPI.Container
             var response = new APIResponse();
             try
             {
+                _logger.LogInformation("create begin");
                 var tblCustomer = _mapper.Map<CustomerModel, TblCustomer>(customer);
                 await _context.TblCustomers.AddAsync(tblCustomer);
                 await _context.SaveChangesAsync();
@@ -36,6 +39,7 @@ namespace LearnAPI.Container
 
                 response.ResponseCode = 400;
                 response.ErrorMessage = ex.Message;
+                _logger.LogError(ex.Message, ex);   
             }
             return response;
 
