@@ -28,7 +28,7 @@ namespace LearnAPI.Container
                 await _context.TblCustomers.AddAsync(tblCustomer);
                 await _context.SaveChangesAsync();
                 response.ResponseCode = 201;
-                response.Result =Convert.ToString(customer.Id);
+                response.Result = Convert.ToString(customer.Id);
 
             }
             catch (Exception ex)
@@ -106,6 +106,7 @@ namespace LearnAPI.Container
                     customer.Email = model.Email;
                     customer.CreditLimit = model.CreditLimit;
                     customer.IsActive = model.IsActive;
+                    customer.Code = model.Code;
                     await _context.SaveChangesAsync();
                     response.ResponseCode = 201;
                     response.Result = Convert.ToString(id);
