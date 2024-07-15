@@ -4,6 +4,7 @@ using LearnAPI.Container;
 using LearnAPI.Helper;
 using LearnAPI.Repos;
 using LearnAPI.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -20,7 +21,9 @@ namespace LearnAPI
 
             builder.Services.AddControllers();
             builder.Services.AddDbContext<LearnDataContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("apiconn")));
-
+         
+            //Basic authentication
+            builder.Services.AddAuthentication("BasicAuthentication").AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -50,7 +53,7 @@ namespace LearnAPI
                 options.PermitLimit = 1;
                 options.QueueLimit = 0;
                 options.QueueProcessingOrder = System.Threading.RateLimiting.QueueProcessingOrder.OldestFirst;
-            }).RejectionStatusCode=401); 
+            }).RejectionStatusCode = 401);
 
             //Logger
             var logPath = builder.Configuration.GetSection("Logging:Logpath").Value;
@@ -79,6 +82,8 @@ namespace LearnAPI
             }
 
             app.UseHttpsRedirection();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

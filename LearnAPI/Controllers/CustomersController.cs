@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.RateLimiting;
 
 namespace LearnAPI.Controllers
 {
-  //  [Authorize]
+    [Authorize]
     [EnableRateLimiting("fixedwindow")]
     //[DisableCors]
     [ApiController]
@@ -21,7 +21,7 @@ namespace LearnAPI.Controllers
             _customerService = customerService;
         }
 
-       // [EnableCors("corspolicy")]
+        // [EnableCors("corspolicy")]
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAllAsync()
         {
@@ -53,9 +53,9 @@ namespace LearnAPI.Controllers
         }
 
         [HttpPut("Update")]
-        public async Task<IActionResult> UpdateAsync([FromBody] CustomerModel customer,[FromQuery] int id)
+        public async Task<IActionResult> UpdateAsync([FromBody] CustomerModel customer, [FromQuery] int id)
         {
-            var result = await _customerService.UpdateAsync(customer,id);
+            var result = await _customerService.UpdateAsync(customer, id);
             return Ok(result);
         }
 

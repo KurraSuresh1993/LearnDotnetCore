@@ -4,6 +4,7 @@ using LearnAPI.Repos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LearnAPI.Migrations
 {
     [DbContext(typeof(LearnDataContext))]
-    partial class LearnDataContextModelSnapshot : ModelSnapshot
+    [Migration("20240715101816_tbluserupdated")]
+    partial class tbluserupdated
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -66,28 +69,13 @@ namespace LearnAPI.Migrations
                     b.ToTable("tbl_customer");
                 });
 
-            modelBuilder.Entity("LearnAPI.Repos.Models.TblRefreshtoken", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("RefreshToken")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TokenId")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("UserId");
-
-                    b.ToTable("tbl_refreshtoken");
-                });
-
             modelBuilder.Entity("LearnAPI.Repos.Models.TblUser", b =>
                 {
+                    b.Property<string>("Id")
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)");
+
                     b.Property<string>("Code")
                         .HasMaxLength(50)
                         .IsUnicode(false)
@@ -116,12 +104,7 @@ namespace LearnAPI.Migrations
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Role")
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)");
-
-                    b.HasKey("Code");
+                    b.HasKey("Id");
 
                     b.ToTable("tbl_user");
                 });

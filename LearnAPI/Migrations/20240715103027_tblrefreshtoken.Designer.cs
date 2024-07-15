@@ -4,6 +4,7 @@ using LearnAPI.Repos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LearnAPI.Migrations
 {
     [DbContext(typeof(LearnDataContext))]
-    partial class LearnDataContextModelSnapshot : ModelSnapshot
+    [Migration("20240715103027_tblrefreshtoken")]
+    partial class tblrefreshtoken
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -68,7 +71,7 @@ namespace LearnAPI.Migrations
 
             modelBuilder.Entity("LearnAPI.Repos.Models.TblRefreshtoken", b =>
                 {
-                    b.Property<string>("UserId")
+                    b.Property<string>("IserId")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -81,7 +84,7 @@ namespace LearnAPI.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.HasKey("UserId");
+                    b.HasKey("IserId");
 
                     b.ToTable("tbl_refreshtoken");
                 });
