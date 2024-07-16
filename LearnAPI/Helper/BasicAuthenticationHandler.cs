@@ -20,13 +20,11 @@ namespace LearnAPI.Helper
 
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            if (!Request.Headers.ContainsKey("Autherization"))
+            string authHeader = Request.Headers["Authorization"].ToString();
+            if (!string.IsNullOrEmpty(authHeader))
             {
-                return AuthenticateResult.Fail("No Header Found");
-            }
-            var headerValue = AuthenticationHeaderValue.Parse(Request.Headers["Autherization"]);
-            if (headerValue is null)
-            {
+                var headerValue = AuthenticationHeaderValue.Parse(authHeader);
+
                 var bytes = Convert.FromBase64String(headerValue.Parameter);
                 string credentials = Encoding.UTF8.GetString(bytes);
                 string[] array = credentials.Split(":");
@@ -35,7 +33,7 @@ namespace LearnAPI.Helper
                 var user = await _context.TblUsers.FirstOrDefaultAsync(u => u.Code == username && u.Password == password);
                 if (user is not null)
                 {
-                    var claims = new []
+                    var claims = new[]
                          {
                               new Claim(ClaimTypes.Name, user.Code),
                          };
@@ -55,4 +53,5 @@ namespace LearnAPI.Helper
         }
     }
 }
+
 

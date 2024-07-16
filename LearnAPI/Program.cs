@@ -2,12 +2,16 @@
 using AutoMapper;
 using LearnAPI.Container;
 using LearnAPI.Helper;
+using LearnAPI.Models;
 using LearnAPI.Repos;
 using LearnAPI.Services;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using System.Text;
 
 namespace LearnAPI
 {
@@ -21,13 +25,35 @@ namespace LearnAPI
 
             builder.Services.AddControllers();
             builder.Services.AddDbContext<LearnDataContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("apiconn")));
-         
+
             //Basic authentication
-            builder.Services.AddAuthentication("BasicAuthentication").AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
+            // builder.Services.AddAuthentication("BasicAuthentication").AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
+
+            //JWT authentocation
+            var authKey = builder.Configuration.GetValue<string>("JwtSettings:securitykey");
+            builder.Services.AddAuthentication(item =>
+            {
+                item.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                item.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.RequireHttpsMetadata = true;
+                options.SaveToken = true;
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authKey)),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ClockSkew = TimeSpan.Zero
+                };
+            });
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddTransient<ICustomerService, CustomerService>();
+            builder.Services.AddTransient<IRefreshHandler, RefreshHandler>();
 
             //auto mapper
             var automapper = new MapperConfiguration(item => item.AddProfile(new AutoMapperHandler()));
@@ -64,6 +90,10 @@ namespace LearnAPI
                 .WriteTo.File(logPath)
                 .CreateLogger();
             builder.Logging.AddSerilog(_logger);
+
+            //JWT Authentication
+            var _jwtsettings = builder.Configuration.GetSection("JwtSettings");
+            builder.Services.Configure<JwtSettings>(_jwtsettings);
 
             var app = builder.Build();
 
