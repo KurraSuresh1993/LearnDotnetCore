@@ -1,6 +1,9 @@
 ﻿using LearnAPI.Helper;
+using LearnAPI.Repos;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.IO;
 
 namespace LearnAPI.Controllers
 {
@@ -9,10 +12,12 @@ namespace LearnAPI.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly LearnDataContext _context;
 
-        public ProductController(IWebHostEnvironment webHostEnvironment)
+        public ProductController(IWebHostEnvironment webHostEnvironment, LearnDataContext context)
         {
             _webHostEnvironment = webHostEnvironment;
+            _context = context;
         }
 
         [HttpPut("UploadImage")]
@@ -125,7 +130,6 @@ namespace LearnAPI.Controllers
                     FileInfo[] fileInfos = dir.GetFiles();
                     foreach (FileInfo fileInfo in fileInfos)
                     {
-                        // imageUrl.Add(fileInfo.FullName);
                         string fileName = fileInfo.Name;
                         string imgPath = $"{filePath}\\{fileName}";
                         if (System.IO.File.Exists(imgPath))
@@ -135,10 +139,6 @@ namespace LearnAPI.Controllers
                         }
                     }
                 }
-
-
-
-
                 else
                 {
                     return NotFound();
@@ -156,8 +156,6 @@ namespace LearnAPI.Controllers
         [HttpGet("DownloadImage")]
         public async Task<IActionResult> DownloadImageAsync(string productCode)
         {
-            //string imageUrl = string.Empty;
-            //string hostUrl = $"{this.Request.Scheme}://{this.Request.Host}{this.Request.PathBase}";
             try
             {
                 string filePath = GetFilePath(productCode);
@@ -172,7 +170,6 @@ namespace LearnAPI.Controllers
                     }
                     stream.Position = 0;
                     return File(stream, "img/png", productCode + ".png");
-                    // imageUrl = $"{hostUrl}/Upload/products/{productCode}/{productCode}.png";
                 }
                 else
                 {
@@ -190,8 +187,6 @@ namespace LearnAPI.Controllers
         [HttpDelete("RemoveImage")]
         public async Task<IActionResult> RemoveImageAsync(string productCode)
         {
-            //string imageUrl = string.Empty;
-            //string hostUrl = $"{this.Request.Scheme}://{this.Request.Host}{this.Request.PathBase}";
             try
             {
                 string filePath = GetFilePath(productCode);
@@ -218,8 +213,6 @@ namespace LearnAPI.Controllers
         [HttpDelete("RemoveMultipleImages")]
         public async Task<IActionResult> RemoveMultipleImagesAsync(string productCode)
         {
-            //string imageUrl = string.Empty;
-            //string hostUrl = $"{this.Request.Scheme}://{this.Request.Host}{this.Request.PathBase}";
             try
             {
                 string filePath = GetFilePath(productCode);
@@ -248,6 +241,106 @@ namespace LearnAPI.Controllers
             return Ok();
         }
 
+        [HttpPut("MultiUploadImageToDataBase")]
+        public async Task<IActionResult> DataBaseMultiUploadImageAsync(IFormFileCollection formFiles, string productCode)
+        {
+            int passCount = 0;
+            int errorCount = 0;
+            APIResponse response = new APIResponse();
+            try
+            {
+
+
+                foreach (var file in formFiles)
+                {
+
+                    using (MemoryStream stream = new MemoryStream())
+                    {
+                        await file.CopyToAsync(stream);
+                        _context.TblProductImages.Add(new Repos.Models.TblProductImage()
+                        {
+                            ProductCode = productCode,
+                            ProductImage = stream.ToArray()
+                        });
+                        await _context.SaveChangesAsync();
+                        passCount++;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                errorCount++;
+                response.ErrorMessage = ex.Message;
+            }
+            response.ResponseCode = 200;
+            response.Result = passCount + " Files uploaded & " + errorCount + " files failed";
+            return Ok(response);
+        }
+
+        [HttpGet("GetMultipleImagesfromDataBase")]
+        public async Task<IActionResult> GetMultipleImagesfromDataBaseAsync(string productCode)
+        {
+            List<string> imageUrlList = new();
+            try
+            {
+                
+                var productImages = _context.TblProductImages.Where(item => item.ProductCode == productCode);
+                if (productImages.Count() > 0 && productImages != null)
+                {
+                    foreach (var item in productImages)
+                    {
+                        imageUrlList.Add(Convert.ToBase64String(item.ProductImage));
+                    }
+                }
+                else
+                {
+                    return NotFound();
+                }
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return Ok(imageUrlList);
+        }
+
+        [HttpGet("DownloadDataBaseImage")]
+        public async Task<IActionResult> DownloadDataBaseImageAsync(string productCode)
+        {
+            try
+            {
+                var _productImage = await _context.TblProductImages.FirstOrDefaultAsync(item => item.ProductCode == productCode);
+                if (_productImage != null)
+                {
+                    return File(_productImage.ProductImage, "img/png", productCode + ".png");
+                }
+                //string filePath = GetFilePath(productCode);
+                //string imgPath = $"{filePath}\\{productCode}.png";
+
+                //if (System.IO.File.Exists(imgPath))
+                //{
+                //    MemoryStream stream = new MemoryStream();
+                //    using (FileStream fileStream = new FileStream(imgPath, FileMode.Open))
+                //    {
+                //        await fileStream.CopyToAsync(stream);
+                //    }
+                //    stream.Position = 0;
+                //    return File(stream, "img/png", productCode + ".png");
+                //}
+                else
+                {
+                    return NotFound();
+                }
+
+            }
+            catch (Exception)
+            {
+
+                return NotFound();
+            }
+        }
         [NonAction]
         private string GetFilePath(string productCode)
         {

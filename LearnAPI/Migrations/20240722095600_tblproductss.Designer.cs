@@ -4,6 +4,7 @@ using LearnAPI.Repos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LearnAPI.Migrations
 {
     [DbContext(typeof(LearnDataContext))]
-    partial class LearnDataContextModelSnapshot : ModelSnapshot
+    [Migration("20240722095600_tblproductss")]
+    partial class tblproductss
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -81,26 +84,6 @@ namespace LearnAPI.Migrations
                     b.HasKey("Code");
 
                     b.ToTable("tbl_product");
-                });
-
-            modelBuilder.Entity("LearnAPI.Repos.Models.TblProductImage", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ProductCode")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<byte[]>("ProductImage")
-                        .HasColumnType("image")
-                        .HasColumnName("ProductImage");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("tbl_productimage");
                 });
 
             modelBuilder.Entity("LearnAPI.Repos.Models.TblRefreshtoken", b =>
