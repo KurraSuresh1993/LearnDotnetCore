@@ -31,7 +31,7 @@ namespace LearnAPI.Controllers
         [HttpPost("GenerateToken")]
         public async Task<ActionResult> GenerateTokenAsync([FromBody] UserCredential userCredential)
         {
-            var user = await _context.TblUsers.FirstOrDefaultAsync(item => item.Code == userCredential.UserName && item.Password == userCredential.Password);
+            var user = await _context.TblUsers.FirstOrDefaultAsync(item => item.Username == userCredential.UserName && item.Password == userCredential.Password);
 
             if (user is not null)
             {
@@ -42,7 +42,7 @@ namespace LearnAPI.Controllers
                 {
                     Subject = new ClaimsIdentity(new Claim[]
                     {
-                        new(ClaimTypes.Name,user.Code),
+                        new(ClaimTypes.Name,user.Username),
                         new(ClaimTypes.Role,user.Role)
                     }),
                     Expires = DateTime.UtcNow.AddSeconds(30),

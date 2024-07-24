@@ -55,6 +55,8 @@ namespace LearnAPI
             builder.Services.AddSwaggerGen();
             builder.Services.AddTransient<ICustomerService, CustomerService>();
             builder.Services.AddTransient<IRefreshHandler, RefreshHandler>();
+            builder.Services.AddTransient<IUserRoleService, UserRoleService>();
+            builder.Services.AddTransient<IUserService, UserService>();
 
             //auto mapper
             var automapper = new MapperConfiguration(item => item.AddProfile(new AutoMapperHandler()));

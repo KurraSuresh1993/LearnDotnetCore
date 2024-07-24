@@ -30,12 +30,12 @@ namespace LearnAPI.Helper
                 string[] array = credentials.Split(":");
                 string username = array[0];
                 string password = array[1];
-                var user = await _context.TblUsers.FirstOrDefaultAsync(u => u.Code == username && u.Password == password);
+                var user = await _context.TblUsers.FirstOrDefaultAsync(u => u.Username == username && u.Password == password);
                 if (user is not null)
                 {
                     var claims = new[]
                          {
-                              new Claim(ClaimTypes.Name, user.Code),
+                              new Claim(ClaimTypes.Name, user.Username),
                          };
                     var identity = new ClaimsIdentity(claims, Scheme.Name);
                     var principal = new ClaimsPrincipal(identity);

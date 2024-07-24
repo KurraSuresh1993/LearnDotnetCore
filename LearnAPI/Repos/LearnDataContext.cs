@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using LearnAPI.Models;
 using LearnAPI.Repos.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,9 +27,22 @@ public partial class LearnDataContext : DbContext
 
     public virtual DbSet<TblProductImage> TblProductImages { get; set; }
 
-//    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-//        => optionsBuilder.UseSqlServer("Server=SRV2022\\SQLEXPRESS;DataBase=test_db;Trusted_Connection=True;TrustServerCertificate=True;");
+    public virtual DbSet<TblMenu> TblMenus { get; set; }
+
+    public virtual DbSet<TblOtpManager> TblOtpManagers { get; set; }
+
+    public virtual DbSet<TblPwdManger> TblPwdMangers { get; set; }
+
+    public virtual DbSet<TblRole> TblRoles { get; set; }
+
+    public virtual DbSet<TblRolepermission> TblRolepermissions { get; set; }
+
+    public virtual DbSet<TblTempuser> TblTempusers { get; set; }
+
+
+    //    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+    //        => optionsBuilder.UseSqlServer("Server=SRV2022\\SQLEXPRESS;DataBase=test_db;Trusted_Connection=True;TrustServerCertificate=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -40,7 +54,7 @@ public partial class LearnDataContext : DbContext
 
         modelBuilder.Entity<TblUser>(entity =>
         {
-            entity.Property(e => e.IsActive).HasDefaultValueSql("((1))");
+            entity.Property(e => e.Isactive).HasDefaultValueSql("((1))");
         });
 
         OnModelCreatingPartial(modelBuilder);
