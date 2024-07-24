@@ -4,6 +4,7 @@ using LearnAPI.Container;
 using LearnAPI.Helper;
 using LearnAPI.Models;
 using LearnAPI.Repos;
+using LearnAPI.Repos.Models;
 using LearnAPI.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -96,6 +97,39 @@ namespace LearnAPI
             builder.Services.Configure<JwtSettings>(_jwtsettings);
 
             var app = builder.Build();
+
+            //minimal api
+            app.MapGet("/minimalapi", () => "Kurra Suresh");
+            app.MapGet("/GetAllCustomers", async (LearnDataContext _context) => await _context.TblCustomers.ToListAsync());
+            app.MapGet("/GetCustomerById/{id}", async (LearnDataContext _context, int id) => await _context.TblCustomers.FindAsync(id));
+            app.MapPost("/CreateCustomer", async (LearnDataContext _context, TblCustomer customer) =>
+            {
+                await _context.TblCustomers.AddAsync(customer);
+                await _context.SaveChangesAsync();
+            });
+            app.MapPut("/UpdateCustomer/{id}", async (LearnDataContext _context, TblCustomer customer, int id) =>
+            {
+                var existCustomer = await _context.TblCustomers.FindAsync(id);
+                if (existCustomer != null)
+                {
+                    existCustomer.Name = customer.Name;
+                    existCustomer.Email = customer.Email;
+                    existCustomer.Phone = customer.Phone;
+                    existCustomer.CreditLimit = customer.CreditLimit;
+                    existCustomer.Code = customer.Code;
+                }
+
+                await _context.SaveChangesAsync();
+            });
+            app.MapDelete("/DeleteCustomer/{id}", async (LearnDataContext _context, int id) =>
+            {
+                var existCustomer = await _context.TblCustomers.FindAsync(id);
+                if (existCustomer != null)
+                {
+                    _context.TblCustomers.Remove(existCustomer);
+                }
+                await _context.SaveChangesAsync();
+            });
 
             //RateLimiter
             app.UseRateLimiter();
